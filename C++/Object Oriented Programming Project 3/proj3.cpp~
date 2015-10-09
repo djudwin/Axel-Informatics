@@ -1,0 +1,194 @@
+/******************************************************
+ ** File:        proj3.cpp
+ ** Project:     CMSC 202 Project 3, Spring 2015
+ ** Author:      David Udwin
+ ** Date:        March 17, 2015
+ ** Email:       udwin1@umbc.edu
+ ** Description: This program tests the connected components 
+ **              of graphs.  It does this by having a list of
+ **              edges inputted, and then assembling an 
+ **              adjacency matrix.  This matrix is then used
+ **              to computer connected components of an invidivual
+ **              vertex.
+ ********************************************************/
+
+#include <iostream>
+#include <cmath>
+#include<vector>
+#include "Edge.h"
+#include "Graph.h"
+#include "Vertex.h"
+#include "Matrix.h"
+
+using namespace std;
+
+//Function: userSelection
+//Precondtion: Program is run
+//Postcondition: Returns users choice of action for the program
+char userSelection();
+
+//Function: isFileLoaded
+//Precondition: Program is run
+//Postcondition: States whether or not a data file is loaded
+bool isFileLoaded(Graph& graph);
+
+
+int main(){
+
+  cout<<"\n";
+
+  Graph graph;
+
+
+  bool flag = true;
+  bool fileLoaded = false;
+  string fileName;
+  do {
+
+
+    fileLoaded = isFileLoaded(graph);
+    if (fileLoaded == true){
+      cout<<"The data file "<<fileName<<" is currently loaded\n\n";
+    }
+    char selection = userSelection();
+
+    switch(selection) {
+    case '1':
+      {
+
+	string tempFileName;
+	cout<<"\nEnter the file name: ";
+	cin>>tempFileName;
+	bool work = graph.LoadFromFile(tempFileName);
+	if (work == false){
+	  cout<<"Error loading data file ("<<tempFileName<<") .\n\n";
+	}
+	else{
+	  cout<<endl;
+	  fileName = tempFileName;
+	}
+	break;
+      }
+    case 'v':
+    {
+
+      vector<Vertex *> tempVertices = graph.GetVertices();
+      int numVertices = graph.GetNumVertices();
+      cout<<endl;
+      cout<<"Vertices:\n";
+      for (int i = 0;i<numVertices;i++){
+	Vertex display;
+	display = *tempVertices[i];
+	cout<<display<<endl;
+      }
+      cout<<"\n";
+      break;
+    }
+    case 'e':
+      {
+	int numEdges = graph.GetNumEdges();
+	vector<Edge *> tempEdges = graph.GetEdges();
+	cout<<"\nEdges:\n";
+	for (int i = 0;i<numEdges;i++){
+	  cout<<*tempEdges[i]<<endl;
+	}
+	cout<<"\n";
+	break;
+      }
+    case 'c':
+      {
+	vector<Vertex *> tempVertices = graph.GetVertices();
+	int vertexID;
+	int highID = 0;
+	int numVertices = graph.GetNumVertices();
+	//Find highest and lowest vertex ID
+	for (int i = 0;i<numVertices;i++){
+	  Vertex* findHighID = tempVertices[i];
+	  int findingHighAndLow = findHighID->GetID();
+	  if (findingHighAndLow > highID){
+	    highID = findingHighAndLow;
+	  }
+	}
+	int lowID = highID;
+	for (int i = 0;i<numVertices;i++){
+	  Vertex* findLowID = tempVertices[i];
+          int findingHighAndLow = findLowID->GetID();
+          if (findingHighAndLow < lowID){
+            lowID = findingHighAndLow;
+          }
+	}
+	cout<<"Find the connected component of a given vertex.\n";
+	cout<<"Enter vertex ID:";
+	cin>>vertexID;
+	if (vertexID > highID){
+	  cout<<"Vertex with ID "<<vertexID<<" not found.\n\n";
+	}
+	else if (vertexID < lowID){
+	  cout<<"Vertex with ID "<<vertexID<<" not found.\n\n";
+	}
+	else{
+	  Vertex *v = tempVertices[vertexID];
+	  vector<Vertex *> connected = graph.GetConnectedComponent(v);
+	  cout<<"Connected component of vertex with ID "<<vertexID<<":"<<endl;
+	  for (int i = 0;i<connected.size();i++){
+	    Vertex display = *connected[i];
+	    cout<<display<<endl;
+	  }
+	  cout<<endl;  
+	}
+	break;
+      }
+    case 'q':
+      {
+	flag = false;
+	cout<<"\nGoodbye!\n";
+	break;
+      }
+      
+    default:
+      {
+	cout<<"\nPlease enter a valid input\n\n";
+	break;
+      }
+
+    }
+
+  }
+  while (flag == true);
+
+  return 0;
+
+}
+
+char userSelection(){
+
+  char selection;
+  cout<<"Choose an action from the following menu:\n\n";
+  cout<<"  1 - load a graph data file\n";
+  cout<<"  v - list the vertices of the loaded graph\n";
+  cout<<"  e - list the edges of the loaded graph\n";
+  cout<<"  c - list the connected component of a specific vertex\n";
+  cout<<"  q - quit\n\n";
+  cout<<"Selection: ";
+  cin>>selection;
+
+  return selection;
+}
+
+bool isFileLoaded(Graph& graph){
+
+  bool flag;
+  int zero = 0;
+  int numVertices = graph.GetNumVertices();
+  if (numVertices > zero){
+    flag = true;
+  }
+  else{
+    cout<<"There is no data file loaded.\n\n";
+    flag = false;
+  }
+  return flag;
+}
+
+
+

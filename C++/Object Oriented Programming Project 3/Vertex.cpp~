@@ -1,0 +1,27 @@
+#include <iostream>
+#include <vector>
+#include "Vertex.h"
+#include "Edge.h"
+#include "Graph.h"
+#include "Matrix.h"
+
+using namespace std;
+
+int Vertex::m_ID;
+
+Vertex::Vertex(){
+
+  m_returnValue = m_ID++;
+}
+
+int Vertex::GetID() const{
+  return m_returnValue;
+}
+
+
+ostream & operator << (ostream& out, const Vertex& vertex){
+
+  out<<"ID: "<<vertex.GetID();
+  return out;
+
+}
